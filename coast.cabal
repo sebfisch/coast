@@ -4,13 +4,13 @@ license:           BSD3
 license-file:      LICENSE
 author:            Sebastian Fischer
 maintainer:        Sebastian Fischer
-synopsis:          The greatest Yesod web application ever.
-description:       I'm sure you can say something clever here if you try.
+synopsis:          Coast - Code Host
+description:       A platform for hosting and documenting Darcs repositories.
 category:          Web
 stability:         Experimental
 cabal-version:     >= 1.8
 build-type:        Simple
-homepage:          http://coast.yesodweb.com/
+homepage:          
 
 Flag dev
     Description:   Turn on development settings, like auto-reload templates.
@@ -62,7 +62,7 @@ library
                  , bytestring                    >= 0.9        && < 0.10
                  , text                          >= 0.11       && < 0.12
                  , persistent                    >= 1.0        && < 1.1
-                 , persistent-sqlite     >= 1.0        && < 1.1
+                 , persistent-sqlite             >= 1.0        && < 1.1
                  , template-haskell
                  , hamlet                        >= 1.1        && < 1.2
                  , shakespeare-css               >= 1.0        && < 1.1
@@ -101,4 +101,4 @@ test-suite test
                  , yesod-default
                  , yesod-core
                  , persistent                    >= 1.0        && < 1.1
-                 , persistent-sqlite     >= 1.0        && < 1.1
+                 , persistent-sqlite             >= 1.0        && < 1.1
