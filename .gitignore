@@ -2,3 +2,6 @@ _darcs
 .darcs-boring
 cabal-dev
 dist
+config/client_session_key.aes
+static/tmp
+*.sqlite3
