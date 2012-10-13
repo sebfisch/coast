@@ -1,5 +1,5 @@
 <div .top_navigation>
     <ul>
-       <li>
+        <li>
             <a href="@{HomeR}">
                 Home
