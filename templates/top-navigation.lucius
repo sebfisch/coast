@@ -1,9 +1,8 @@
-.top_navigation {
+.top-navigation {
     width: 100%;
     overflow: auto;
     font-weight: bold;
     font-size: 11pt;
-    border: 1px solid;
     
     ul {
         margin: 0px;

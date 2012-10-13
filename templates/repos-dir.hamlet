@@ -1,0 +1,16 @@
+^{top_navigation}
+
+<div .repos-dir>
+    <table>
+        <tr>
+            <th>
+                #{path}
+        $forall (dir,file) <- contents
+            <tr>
+                <td>
+                    $if dir
+                        <a .directory href="@{makeRoute file}">
+                            #{file}
+                    $else
+                        <a href="@{makeRoute file}">
+                            #{file}

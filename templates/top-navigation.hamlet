@@ -1,4 +1,4 @@
-<div .top_navigation>
+<div .top-navigation>
     <ul>
         $forall (label,route) <- links
             <li>

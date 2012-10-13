@@ -19,11 +19,38 @@
 @darkText:      #839496;
 @darkTextHigh:  #93a1a1;
 
-.top_navigation {
+.top-navigation {
     background-color:   #{darkBg};
-    border-color:       #{darkBgHigh};
+    border:             1px solid #{darkBgHigh};
 
     a {
         color:          #{darkText};
+    }
+}
+
+.repos-dir {
+    table {
+        background-color:       #{lightBg};
+        color:                  #{lightText};
+        border:                 1px solid #{lightBgHigh};
+
+        th {
+            background-color:   #{darkBg};
+            color:              #{darkText};
+        }
+
+        tr:nth-child(odd) {
+            background-color:   #{lightBgHigh};
+            color:              #{lightTextHigh};
+        }
+    }
+
+    a {
+        color:                  #{lightText};
+    }
+
+    a.directory {
+        color:                  #{orange};
+        font-weight:            bold;
     }
 }
