@@ -1,5 +1,3 @@
-^{top_navigation}
-
 $maybe msg <- mmsg
     <div #message>#{msg}
 
