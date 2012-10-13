@@ -50,7 +50,7 @@
     }
 
     a.directory {
-        color:                  #{orange};
+        color:                  #{yellow};
         font-weight:            bold;
     }
 }

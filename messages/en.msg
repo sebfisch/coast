@@ -1,1 +1,2 @@
-Hello: Hello
+Home: Home
+Code: Code

@@ -3,4 +3,4 @@
         $forall (label,route) <- links
             <li>
                 <a href="@{route}">
-                    #{label}
+                    _{label}
