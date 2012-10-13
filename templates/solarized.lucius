@@ -1,0 +1,30 @@
+@yellow:        #b58900;
+@orange:        #cb4b16;
+@red:           #dc322f;
+@magenta:       #d33682;
+@violet:        #6c71c4;
+@blue:          #268bd2;
+@cyan:          #2aa198;
+@green:         #859900;
+
+@lightBg:       #fdf6e3;
+@lightBgHigh:   #eee8d5;
+@lightTextLow:  #93a1a1;
+@lightText:     #657b83;
+@lightTextHigh: #586e75;
+
+@darkBg:        #002b36;
+@darkBgHigh:    #073642;
+@darkTextLow:   #586e75;
+@darkText:      #839496;
+@darkTextHigh:  #93a1a1;
+
+.top_navigation {
+    background-color:   #{darkBg};
+    color:              #{darkText};
+    border-color:       #{darkBgHigh};
+}
+
+.top_navigation a {
+    color:              #{darkText};
+}

@@ -1,0 +1,22 @@
+.top_navigation {
+    width: 100%;
+    overflow: auto;
+    font-weight: bold;
+    font-size: 11pt;
+    border: 1px solid;
+    
+    ul {
+        margin: 0px;
+        padding: 0px;
+        display: inline;
+        list-style: none;
+
+        li {
+            float: left;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            padding-left: 2em;
+            padding-right: 0px;
+        }
+    }
+}
