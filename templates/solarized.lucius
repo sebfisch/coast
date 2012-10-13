@@ -21,10 +21,9 @@
 
 .top_navigation {
     background-color:   #{darkBg};
-    color:              #{darkText};
     border-color:       #{darkBgHigh};
-}
 
-.top_navigation a {
-    color:              #{darkText};
+    a {
+        color:          #{darkText};
+    }
 }

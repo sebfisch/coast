@@ -1,0 +1,8 @@
+@font-face {
+    font-family: open-dyslexic;
+    src: url('@{StaticR opendyslexic_ttf}'); 
+}
+
+body {
+    font-family: open-dyslexic;
+}
