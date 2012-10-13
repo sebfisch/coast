@@ -32,16 +32,15 @@
     table {
         background-color:       #{lightBg};
         color:                  #{lightText};
-        border:                 1px solid #{lightBgHigh};
+        border:                 solid #{lightBgHigh};
 
         th {
             background-color:   #{darkBg};
             color:              #{darkText};
         }
 
-        tr:nth-child(odd) {
-            background-color:   #{lightBgHigh};
-            color:              #{lightTextHigh};
+        tr {
+            border:             1px solid #{lightBgHigh}
         }
     }
 

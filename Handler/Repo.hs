@@ -14,7 +14,7 @@ makePath path = intercalate "/" path
 
 getRepoR :: [String] -> Handler RepHtml
 getRepoR []             = redirect HomeR
-getRepoR names@(name:_) = do
+getRepoR names@(name:others) = do
     let links = [(MsgCode, RepoR [name])]
         top_navigation = $(widgetFile "top-navigation")
         path = makePath names
@@ -26,7 +26,10 @@ getRepoR names@(name:_) = do
     if isDir then do
         contents <- liftIO $
                         (   fmap (sortOn (map toLower)) $
-                            fmap (filter ((/='.') . head)) $
+                            (if null others then
+                                fmap (filter (/=".."))
+                              else id) $
+                            fmap (filter (/=".")) $
                             fmap (filter (/="_darcs")) $
                             getDirectoryContents fullPath
                         ) >>= mapM (markDirectory fullPath)

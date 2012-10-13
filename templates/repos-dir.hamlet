@@ -1,10 +1,12 @@
 ^{top_navigation}
 
+
 <div .repos-dir>
+    <h3>
+        $forall subpath <- tail $ inits names
+            / <a href="@{RepoR subpath}">#{last subpath}</a> #
+
     <table>
-        <tr>
-            <th>
-                #{path}
         $forall (dir,file) <- contents
             <tr>
                 <td>
