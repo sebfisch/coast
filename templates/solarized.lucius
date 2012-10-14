@@ -19,11 +19,23 @@
 @darkText:      #839496;
 @darkTextHigh:  #93a1a1;
 
+body {
+    color:                      #{lightText}
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color:                      #{lightTextHigh}
+}
+
+a {
+    color:                      #{yellow}
+}
+
 .top-navigation {
-    background-color:   #{darkBg};
+    background-color:           #{darkBg};
 
     a {
-        color:          #{darkText};
+        color:                  #{darkText};
     }
 }
 
