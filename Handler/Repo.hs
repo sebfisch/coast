@@ -5,6 +5,7 @@ import System.Directory
 import Data.List
 import Data.Char
 import Data.Function
+import Data.String
 
 reposPath :: FilePath
 reposPath = "var/repos"
@@ -17,27 +18,29 @@ getRepoR []             = redirect HomeR
 getRepoR names@(name:others) = do
     let links = [(MsgCode, RepoR [name])]
         top_navigation = $(widgetFile "top-navigation")
-        path = makePath names
         fullPath = makePath (reposPath:names)
 
     isDir   <- liftIO $ doesDirectoryExist fullPath
     isFile  <- liftIO $ doesFileExist fullPath
 
     if isDir then do
-        contents <- liftIO $
-                        (   fmap (sortOn (map toLower)) $
-                            (if null others then
-                                fmap (filter (/=".."))
-                              else id) $
-                            fmap (filter (/=".")) $
-                            fmap (filter (/="_darcs")) $
-                            getDirectoryContents fullPath
-                        ) >>= mapM (markDirectory fullPath)
+        contents <- liftIO $ getAnnotatedContents (null others) fullPath
         let makeRoute file = RepoR $ names ++ [file]
-        defaultLayout $(widgetFile "repos-dir")
+        defaultLayout $ do
+            setTitle $ fromString $ makePath names
+            $(widgetFile "repos-dir")
       else if isFile then do
         defaultLayout $(widgetFile "homepage")
       else notFound
+
+getAnnotatedContents :: Bool -> FilePath -> IO [(Bool,FilePath)]
+getAnnotatedContents isTopLevel fullPath = do
+    contents <- getDirectoryContents fullPath
+    let filtered    = [file | file <- contents, not $ file `elem` hiddenFiles]
+        sorted      = sortOn (map toLower) filtered
+    mapM (markDirectory fullPath) sorted
+  where
+    hiddenFiles = "." : if isTopLevel then ["..","_darcs"] else []
 
 markDirectory :: FilePath -> FilePath -> IO (Bool,FilePath)
 markDirectory prefix file = do 

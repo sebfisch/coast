@@ -21,7 +21,6 @@
 
 .top-navigation {
     background-color:   #{darkBg};
-    border:             1px solid #{darkBgHigh};
 
     a {
         color:          #{darkText};
