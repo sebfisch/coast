@@ -2,7 +2,7 @@
 
 <div .repos-dir>
     <h3>
-        _{MsgRepos}
+        #{reposPath}
 
     <table>
         $forall name <- repos
