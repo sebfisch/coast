@@ -1,1 +1,12 @@
 ^{top_navigation}
+
+<div .repos-dir>
+    <h3>
+        _{MsgRepos}
+
+    <table>
+        $forall name <- repos
+            <tr>
+                <td>
+                    <a .directory href="@{makeRoute name}">
+                        #{name}

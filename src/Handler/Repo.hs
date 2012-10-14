@@ -12,12 +12,6 @@ import Data.Conduit.Binary
 import qualified Data.ByteString as B
 import qualified Data.Text.IO as T
 
-reposPath :: FilePath
-reposPath = "var/repos"
-
-makePath :: [FilePath] -> FilePath
-makePath path = intercalate "/" path
-
 getRepoR :: [String] -> Handler RepHtml
 getRepoR [] = redirect HomeR
 getRepoR names@(name:others) = do
