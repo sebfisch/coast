@@ -4,8 +4,13 @@ import Import
 import System.Directory
 import Data.List
 import Data.Char
+import Data.Maybe
 import Data.Function
 import Data.String
+import Data.Conduit
+import Data.Conduit.Binary
+import qualified Data.ByteString as B
+import qualified Data.Text.IO as T
 
 reposPath :: FilePath
 reposPath = "var/repos"
@@ -30,11 +35,26 @@ getRepoR names@(name:others) = do
             setTitle $ fromString $ makePath names
             $(widgetFile "repos-dir")
       else if isFile then do
-        defaultLayout $ do
-            setTitle $ fromString $ makePath names
-            isTextFile <- liftIO $ guessIfTextFile fullPath
-            $(widgetFile "repos-file")
+        rawRequested <- isJust <$> lookupGetParam "raw"
+        isText <- liftIO $ guessIfTextFile fullPath
+        if rawRequested then do
+            sendFile (guessContentType isText fullPath) fullPath
+          else do
+            renderFile top_navigation isText fullPath names
       else notFound
+
+renderFile  :: GWidget sub App () -> Bool -> FilePath -> [FilePath]
+            -> GHandler sub App RepHtml
+renderFile top_navigation isText fullPath names = do
+    maybeText <-
+        if isText then do
+            text <- liftIO $ T.readFile fullPath
+            return $ Just text
+          else
+            return Nothing
+    defaultLayout $ do
+        setTitle $ fromString $ makePath names
+        $(widgetFile "repos-file")
 
 markDirectory :: FilePath -> FilePath -> IO (Bool,FilePath)
 markDirectory prefix file = do 
@@ -50,8 +70,39 @@ getAnnotatedContents isTopLevel fullPath = do
   where
     hiddenFiles = "." : if isTopLevel then ["..","_darcs"] else []
 
+{-
+readIfTextFile :: FilePath -> IO (Maybe Text)
+readIfTextFile fullPath = do
+    isText <- guessIfTextFile fullPath
+    if isText then
+        Just <$> T.readFile fullPath
+      else
+        return Nothing
+-}
+
 guessIfTextFile :: FilePath -> IO Bool
-guessIfTextFile fullPath = return False
+guessIfTextFile fullPath = runResourceT $ do
+    sourceFile fullPath $$ do
+        chunk <- peek
+        return $ maybe True isProbablyText chunk
+
+isProbablyText :: B.ByteString -> Bool
+isProbablyText bs
+    | B.null bs     = True
+    | 0 `B.elem` bs = False
+    | otherwise     = 3 * B.length nonTextBytes <= B.length bs
+  where
+    nonTextBytes    = B.filter (not . (`elem` asciiChars)) bs
+    asciiChars      = [32..126] ++
+                        map (fromInteger . fromIntegral . ord) "\b\t\n\f\r"
+
+guessContentType :: Bool -> FilePath -> ContentType
+guessContentType isText _fullPath
+    | isText    = typePlain
+    | otherwise = typeOctet
 
 sortOn :: Ord b => (a -> b) -> [a] -> [a]
 sortOn f = sortBy (compare `on` f)
+
+peek :: Monad m => GLSink a m (Maybe a)
+peek = await >>= maybe (return Nothing) (\x -> leftover x >> return (Just x))

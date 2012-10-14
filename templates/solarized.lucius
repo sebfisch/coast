@@ -21,46 +21,58 @@
 
 body {
     color:                      #{lightText}
-}
 
-h1, h2, h3, h4, h5, h6 {
-    color:                      #{lightTextHigh}
-}
+    h1, h2, h3, h4, h5, h6 {
+        color:                  #{lightTextHigh}
+    }
 
-a {
-    color:                      #{yellow}
+    a, a:visited, a:active, a:hover {
+        color:                  #{yellow}
+    }
 }
 
 .top-navigation {
     background-color:           #{darkBg};
 
-    a {
+    a, a:visited, a:active, a:hover {
         color:                  #{darkText};
     }
 }
 
-.repos-dir {
-    table {
+.repos-dir, .repos-file {
+    table, pre {
         background-color:       #{lightBg};
         color:                  #{lightText};
-        border:                 solid #{lightBgHigh};
+    }
 
-        th {
-            background-color:   #{darkBg};
-            color:              #{darkText};
-        }
+    table {
+        border:                 solid #{lightBgHigh};    
+    }
 
-        tr {
-            border:             1px solid #{lightBgHigh}
+    pre {
+        border:                 1px solid #{lightBgHigh};
+    }
+
+    th {
+        background-color:       #{darkBg};
+        color:                  #{darkText};
+    }
+
+    tr {
+        border:                 1px solid #{lightBgHigh}
+    }
+
+    h3 {
+        a, a:visited, a:active, a:hover {
+            color:              #{lightText};
         }
     }
 
-    a {
+    a.file {
         color:                  #{lightText};
     }
 
     a.directory {
-        color:                  #{yellow};
         font-weight:            bold;
     }
 }

@@ -3,6 +3,6 @@
     src: url('@{StaticR opendyslexic_ttf}'); 
 }
 
-body {
-    font-family: open-dyslexic;
+body, p {
+    font-family:    open-dyslexic;
 }

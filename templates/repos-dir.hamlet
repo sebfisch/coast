@@ -14,5 +14,5 @@
                         <a .directory href="@{makeRoute file}">
                             #{file}
                     $else
-                        <a href="@{makeRoute file}">
+                        <a .file href="@{makeRoute file}">
                             #{file}
