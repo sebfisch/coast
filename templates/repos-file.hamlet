@@ -1,15 +1,13 @@
 ^{top_navigation}
 
 <div .repos-file>
-    <h3>
-        $forall subpath <- tail $ inits names
-            / <a href="@{RepoR subpath}">#{last subpath}</a> #
-
+    ^{repos_header}
+    
     $maybe text <- maybeText
         <pre>
             #{text}
     $nothing
         <p>
-            Download binary file #
+            _{MsgDownloadBinary} #
             <a href="?raw">
                 #{last names}

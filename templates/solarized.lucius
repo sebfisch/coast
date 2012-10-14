@@ -19,16 +19,16 @@
 @darkText:      #839496;
 @darkTextHigh:  #93a1a1;
 
-body {
-    color:                      #{lightText}
+body, p {
+    color:                      #{lightTextLow}
+}
 
-    h1, h2, h3, h4, h5, h6 {
-        color:                  #{lightTextHigh}
-    }
+h1, h2, h3, h4, h5, h6 {
+    color:                      #{lightTextHigh}
+}
 
-    a, a:visited, a:active, a:hover {
-        color:                  #{yellow}
-    }
+a, a:visited, a:active, a:hover {
+    color:                      #{yellow}
 }
 
 .top-navigation {

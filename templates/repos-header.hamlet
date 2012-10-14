@@ -1,0 +1,3 @@
+<h3>
+    $forall subpath <- tail $ inits names
+        / <a href="@{RepoR subpath}">#{last subpath}</a> #

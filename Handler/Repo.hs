@@ -22,8 +22,9 @@ getRepoR :: [String] -> Handler RepHtml
 getRepoR [] = redirect HomeR
 getRepoR names@(name:others) = do
     let links = [(MsgCode, RepoR [name])]
-        top_navigation = $(widgetFile "top-navigation")
-        fullPath = makePath (reposPath:names)
+        top_navigation  = $(widgetFile "top-navigation")
+        repos_header    = $(widgetFile "repos-header")
+        fullPath        = makePath (reposPath:names)
 
     isDir   <- liftIO $ doesDirectoryExist fullPath
     isFile  <- liftIO $ doesFileExist fullPath
@@ -40,21 +41,11 @@ getRepoR names@(name:others) = do
         if rawRequested then do
             sendFile (guessContentType isText fullPath) fullPath
           else do
-            renderFile top_navigation isText fullPath names
+            maybeText <- liftIO $ readIfTextFile isText fullPath
+            defaultLayout $ do
+                setTitle $ fromString $ makePath names
+                $(widgetFile "repos-file")
       else notFound
-
-renderFile  :: GWidget sub App () -> Bool -> FilePath -> [FilePath]
-            -> GHandler sub App RepHtml
-renderFile top_navigation isText fullPath names = do
-    maybeText <-
-        if isText then do
-            text <- liftIO $ T.readFile fullPath
-            return $ Just text
-          else
-            return Nothing
-    defaultLayout $ do
-        setTitle $ fromString $ makePath names
-        $(widgetFile "repos-file")
 
 markDirectory :: FilePath -> FilePath -> IO (Bool,FilePath)
 markDirectory prefix file = do 
@@ -70,15 +61,10 @@ getAnnotatedContents isTopLevel fullPath = do
   where
     hiddenFiles = "." : if isTopLevel then ["..","_darcs"] else []
 
-{-
-readIfTextFile :: FilePath -> IO (Maybe Text)
-readIfTextFile fullPath = do
-    isText <- guessIfTextFile fullPath
-    if isText then
-        Just <$> T.readFile fullPath
-      else
-        return Nothing
--}
+readIfTextFile :: Bool -> FilePath -> IO (Maybe Text)
+readIfTextFile isText fullPath
+    | isText    = Just <$> T.readFile fullPath
+    | otherwise = return Nothing
 
 guessIfTextFile :: FilePath -> IO Bool
 guessIfTextFile fullPath = runResourceT $ do
