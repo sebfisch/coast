@@ -30,8 +30,16 @@ getRepoR names@(name:others) = do
             setTitle $ fromString $ makePath names
             $(widgetFile "repos-dir")
       else if isFile then do
-        defaultLayout $(widgetFile "homepage")
+        defaultLayout $ do
+            setTitle $ fromString $ makePath names
+            isTextFile <- liftIO $ guessIfTextFile fullPath
+            $(widgetFile "repos-file")
       else notFound
+
+markDirectory :: FilePath -> FilePath -> IO (Bool,FilePath)
+markDirectory prefix file = do 
+    isDir <- liftIO $ doesDirectoryExist $ makePath [prefix,file]
+    return (isDir,file)
 
 getAnnotatedContents :: Bool -> FilePath -> IO [(Bool,FilePath)]
 getAnnotatedContents isTopLevel fullPath = do
@@ -42,10 +50,8 @@ getAnnotatedContents isTopLevel fullPath = do
   where
     hiddenFiles = "." : if isTopLevel then ["..","_darcs"] else []
 
-markDirectory :: FilePath -> FilePath -> IO (Bool,FilePath)
-markDirectory prefix file = do 
-    isDir <- liftIO $ doesDirectoryExist $ makePath [prefix,file]
-    return (isDir,file)
+guessIfTextFile :: FilePath -> IO Bool
+guessIfTextFile fullPath = return False
 
 sortOn :: Ord b => (a -> b) -> [a] -> [a]
 sortOn f = sortBy (compare `on` f)
