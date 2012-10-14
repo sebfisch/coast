@@ -15,7 +15,7 @@ import qualified Data.Text.IO as T
 getRepoR :: [String] -> Handler RepHtml
 getRepoR [] = redirect HomeR
 getRepoR names@(name:others) = do
-    let links = [(MsgCode, RepoR [name])]
+    let links = [(MsgHome, HomeR)]
         top_navigation  = $(widgetFile "top-navigation")
         repos_header    = $(widgetFile "repos-header")
         fullPath        = makePath (reposPath:names)
