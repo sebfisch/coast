@@ -14,7 +14,7 @@ makePath :: [FilePath] -> FilePath
 makePath path = intercalate "/" path
 
 getRepoR :: [String] -> Handler RepHtml
-getRepoR []             = redirect HomeR
+getRepoR [] = redirect HomeR
 getRepoR names@(name:others) = do
     let links = [(MsgCode, RepoR [name])]
         top_navigation = $(widgetFile "top-navigation")
