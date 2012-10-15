@@ -9,8 +9,8 @@ import Import                   -- Yesod's Prelude
 import Template.Solarized       -- CSS color names
 
 import Data.String              (fromString)
-import Data.List                (inits, tail, last, intercalate)
-import System.FilePath          (pathSeparator)
+import Data.List                (inits, tail, last)
+import System.FilePath          (joinPath)
 import Text.Lucius              (luciusFile)
 
 
@@ -24,13 +24,13 @@ homepage repos makeRoute = do
 repos_dir   :: [String] -> [(Bool,String)] -> (String -> Route App)
             -> GWidget sub App ()
 repos_dir names contents makeRoute = do
-    setTitle $ fromString $ makePath names
+    setTitle $ fromString $ joinPath names
     $(widgetFile "repos-dir")
 
 
 repos_file :: [String] -> Maybe Text -> GWidget sub App ()
 repos_file names maybeText = do
-    setTitle $ fromString $ makePath names
+    setTitle $ fromString $ joinPath names
     $(widgetFile "repos-file")
 
 
@@ -55,7 +55,3 @@ repos_header names = do
             $forall subpath <- tail $ inits names
                 / <a href="@{RepoR subpath}">#{last subpath}</a> #
     |]
-
-
-makePath :: [String] -> FilePath
-makePath names = intercalate [pathSeparator] names
