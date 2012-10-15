@@ -1,7 +1,7 @@
 module Template.Data where
 
 
-import Import                   -- Yesod's Prelude
+import Import                       -- Yesod's Prelude
 
 
 data    DirEntry    = DirEntry      { isDirectory           :: Bool
