@@ -40,13 +40,13 @@ infixr 5 <>
 #endif
 
 
+reposPath :: FilePath
+reposPath = "var" </> "repos"
+
+
 sortOn :: Ord b => (a -> b) -> [a] -> [a]
 sortOn f = sortBy (compare `on` f)
 
 
 peek :: Monad m => GLSink a m (Maybe a)
 peek = await >>= maybe (return Nothing) (\x -> leftover x >> return (Just x))
-
-
-reposPath :: FilePath
-reposPath = "var" </> "repos"

@@ -5,19 +5,20 @@ module Handler.Repo (
     ) where
 
 
-import Import                   -- Yesod's Prelude
-import Template                 (DirEntry(..), repos_dir, repos_file)
+import           Import
+import           Template            (DirEntry (..), repos_dir, repos_file)
 
-import Data.Char                (ord, toLower)
-import Data.Conduit             (runResourceT, ($$))
-import Data.Conduit.Binary      (sourceFile)
-import Data.Maybe               (isJust)
-import System.Directory         (doesDirectoryExist, doesFileExist
-                                ,getDirectoryContents)
-import System.FilePath          (joinPath, (</>))
+import           Data.Char           (ord, toLower)
+import           Data.Conduit        (runResourceT, ($$))
+import           Data.Conduit.Binary (sourceFile)
+import           Data.Maybe          (isJust)
+import           System.Directory    (doesDirectoryExist, doesFileExist,
+                                      getDirectoryContents)
+import           System.FilePath     (joinPath, (</>))
 
-import qualified Data.ByteString as B
-import qualified Data.Text.IO as T
+import qualified Data.ByteString     as B
+import qualified Data.Text           as T
+import qualified Data.Text.IO        as T
 
 
 getRepoR :: [String] -> Handler RepHtml
@@ -55,7 +56,7 @@ getAnnotatedContents isTopLevel fullPath = do
 
 
 markDirectory :: FilePath -> FilePath -> IO DirEntry
-markDirectory prefix file = do 
+markDirectory prefix file = do
     isDir <- liftIO $ doesDirectoryExist $ prefix </> file
     return $ DirEntry isDir file
 

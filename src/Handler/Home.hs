@@ -5,12 +5,12 @@ module Handler.Home (
     ) where
 
 
-import Import                   -- Yesod's Prelude
-import Template                 (homepage)
+import           Import
+import           Template         (homepage)
 
-import Control.Monad            (filterM)
-import System.Directory         (getDirectoryContents, doesDirectoryExist)
-import System.FilePath          ((</>))
+import           Control.Monad    (filterM)
+import           System.Directory (doesDirectoryExist, getDirectoryContents)
+import           System.FilePath  ((</>))
 
 
 getHomeR :: Handler RepHtml
