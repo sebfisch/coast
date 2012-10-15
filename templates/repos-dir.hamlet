@@ -4,12 +4,12 @@
     ^{repos_header names}
 
     <table>
-        $forall (dir,file) <- contents
+        $forall entry <- contents
             <tr>
                 <td>
-                    $if dir
-                        <a .directory href="@{makeRoute file}">
-                            #{file}
+                    $if isDirectory entry
+                        <a .directory href="@{makeRoute (fileName entry)}">
+                            #{fileName entry}
                     $else
-                        <a .file href="@{makeRoute file}">
-                            #{file}
+                        <a .file href="@{makeRoute $ fileName entry}">
+                            #{fileName entry}

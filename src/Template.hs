@@ -1,12 +1,15 @@
 module Template (
 
+    module Template.Data,
+
     homepage, repos_dir, repos_file
 
     ) where
 
 
-import Import                   -- Yesod's Prelude
+import Import                   hiding (fileName)
 import Template.Solarized       -- CSS color names
+import Template.Data            -- custom data types used in templates
 
 import Data.String              (fromString)
 import Data.List                (inits, tail, last)
@@ -21,7 +24,7 @@ homepage repos makeRoute = do
     $(widgetFile "homepage")
 
 
-repos_dir   :: [String] -> [(Bool,String)] -> (String -> Route App)
+repos_dir   :: [String] -> [DirEntry] -> (String -> Route App)
             -> GWidget sub App ()
 repos_dir names contents makeRoute = do
     setTitle $ fromString $ joinPath names

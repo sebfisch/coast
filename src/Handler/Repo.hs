@@ -6,7 +6,7 @@ module Handler.Repo (
 
 
 import Import                   -- Yesod's Prelude
-import Template                 (repos_dir, repos_file)
+import Template                 (DirEntry(..), repos_dir, repos_file)
 
 import Data.Char                (ord, toLower)
 import Data.Conduit             (runResourceT, ($$))
@@ -44,7 +44,7 @@ getRepoR names@(_:others) = do
         notFound
 
 
-getAnnotatedContents :: Bool -> FilePath -> IO [(Bool,FilePath)]
+getAnnotatedContents :: Bool -> FilePath -> IO [DirEntry]
 getAnnotatedContents isTopLevel fullPath = do
     contents <- getDirectoryContents fullPath
     let filtered    = [file | file <- contents, not $ file `elem` hiddenFiles]
@@ -54,10 +54,10 @@ getAnnotatedContents isTopLevel fullPath = do
     hiddenFiles = "." : if isTopLevel then ["..","_darcs"] else []
 
 
-markDirectory :: FilePath -> FilePath -> IO (Bool,FilePath)
+markDirectory :: FilePath -> FilePath -> IO DirEntry
 markDirectory prefix file = do 
     isDir <- liftIO $ doesDirectoryExist $ prefix </> file
-    return (isDir,file)
+    return $ DirEntry isDir file
 
 
 guessIfTextFile :: FilePath -> IO Bool

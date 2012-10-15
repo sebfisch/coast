@@ -30,6 +30,7 @@ library
                         Settings.StaticFiles
                         Settings.Development
                         Template
+                        Template.Data
                         Template.Solarized
                         Handler.Home
                         Handler.Repo
