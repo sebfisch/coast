@@ -1,16 +1,23 @@
-module Handler.Home where
+module Handler.Home (
+
+    getHomeR
+
+    ) where
+
 
 import Import
 import Template
 
-import System.Directory
-import Control.Monad
+import Control.Monad            (filterM)
+import System.Directory         (getDirectoryContents, doesDirectoryExist)
+
 
 getHomeR :: Handler RepHtml
 getHomeR = do
     contents <- liftIO $ getDirectoryContents reposPath
     repos <- liftIO $ filterM isDarcsRepos contents
     defaultLayout $ homepage repos $ \name -> RepoR [name]
+
 
 isDarcsRepos :: FilePath -> IO Bool
 isDarcsRepos name = do

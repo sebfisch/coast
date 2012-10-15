@@ -7,7 +7,8 @@ module Import
     , module Data.Monoid
     , module Control.Applicative
     , Text
-    , reposPath, makePath
+    , sortOn, peek
+    , reposPath
 #if __GLASGOW_HASKELL__ < 704
     , (<>)
 #endif
@@ -23,18 +24,28 @@ import Data.Monoid (Monoid (mappend, mempty, mconcat), (<>))
 #endif
 import Control.Applicative ((<$>), (<*>), pure)
 import Data.Text (Text)
-import Data.List (intercalate)
 import Settings.StaticFiles
 import Settings.Development
 
-reposPath :: String
-reposPath = "var/repos"
+import Data.Conduit             (GLSink, await, leftover)
+import Data.Function            (on)
+import Data.List                (intercalate, sortBy)
 
-makePath :: [FilePath] -> FilePath
-makePath names = intercalate "/" names
 
 #if __GLASGOW_HASKELL__ < 704
 infixr 5 <>
 (<>) :: Monoid m => m -> m -> m
 (<>) = mappend
 #endif
+
+
+sortOn :: Ord b => (a -> b) -> [a] -> [a]
+sortOn f = sortBy (compare `on` f)
+
+
+peek :: Monad m => GLSink a m (Maybe a)
+peek = await >>= maybe (return Nothing) (\x -> leftover x >> return (Just x))
+
+
+reposPath :: String
+reposPath = "var/repos"
