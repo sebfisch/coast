@@ -5,7 +5,7 @@ module Template.Solarized where
 import Data.Text (Text)
 
 -- base colors for fore- and backgrounds
-b03, b02, b01, b00, b0, b1, b2, b03                             :: Text
+b03, b02, b01, b00, b0, b1, b2, b3                              :: Text
 
 -- accent colors
 yellow, orange, red, magenta, violet, blue, cyan, green         :: Text
