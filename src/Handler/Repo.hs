@@ -14,10 +14,9 @@ import           Data.Conduit.Binary (sourceFile)
 import           Data.Maybe          (isJust)
 import           System.Directory    (doesDirectoryExist, doesFileExist,
                                       getDirectoryContents)
-import           System.FilePath     (joinPath, (</>))
+import           System.FilePath     (joinPath, (</>), takeExtension)
 
 import qualified Data.ByteString     as B
-import qualified Data.Text           as T
 import qualified Data.Text.IO        as T
 
 
@@ -80,10 +79,16 @@ isProbablyText bs
 
 
 guessContentType :: Bool -> FilePath -> ContentType
-guessContentType isText _fullPath
-    | isText    = typePlain
-    | otherwise = typeOctet
-
+guessContentType isText fullPath =
+    maybe (if isText then typePlain else typeOctet) id $
+        lookup (takeExtension fullPath) contentTypes
+  where
+    contentTypes =
+        [(".html",typeHtml) ,(".txt",typePlain) ,(".json",typeJson)
+        ,(".xml",typeXml)   ,(".atom",typeAtom) ,(".rss",typeRss)
+        ,(".jpg",typeJpeg)  ,(".jpeg",typeJpeg) ,(".png",typePng)
+        ,(".gif",typeGif)   ,(".svg",typeSvg)   ,(".js",typeJavascript)
+        ,(".css",typeCss)   ,(".flv",typeFlv)   ,(".ogv",typeOgv)]
 
 readIfTextFile :: Bool -> FilePath -> IO (Maybe Text)
 readIfTextFile isText fullPath

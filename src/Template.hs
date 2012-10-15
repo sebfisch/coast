@@ -12,7 +12,7 @@ import Template.Solarized       -- CSS color names
 import Template.Data            -- custom data types used in templates
 
 import Data.String              (fromString)
-import Data.List                (inits, tail, last)
+import Data.List                (inits, init, tail, last)
 import System.FilePath          (joinPath)
 import Text.Lucius              (luciusFile)
 
@@ -55,6 +55,7 @@ repos_header names = do
 
     [whamlet|$newline always
         <h3 .repos>
-            $forall subpath <- tail $ inits names
+            $forall subpath <- init $ tail $ inits names
                 / <a href="@{RepoR subpath}">#{last subpath}</a> #
+            / <a href="?raw">#{last names}</a>
     |]

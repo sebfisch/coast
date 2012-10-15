@@ -8,6 +8,4 @@
             #{text}
     $nothing
         <p>
-            _{MsgDownloadBinary} #
-            <a href="?raw">
-                #{last names}
+            _{MsgDownloadBinary}
