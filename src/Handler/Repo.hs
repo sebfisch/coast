@@ -34,8 +34,8 @@ getRepoR names@(_:others) = do
         defaultLayout $ repos_dir names contents $
                             \file -> RepoR $ names ++ [file]
       else if isFile then do
-        rawRequested <- isJust <$> lookupGetParam "raw"
-        isText <- liftIO $ guessIfTextFile fullPath
+        rawRequested    <- isJust <$> lookupGetParam "raw"
+        isText          <- liftIO $ guessIfTextFile fullPath
         if rawRequested then do
             sendFile (guessContentType isText fullPath) fullPath
           else do

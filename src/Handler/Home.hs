@@ -15,8 +15,8 @@ import           System.FilePath  ((</>))
 
 getHomeR :: Handler RepHtml
 getHomeR = do
-    contents <- liftIO $ getDirectoryContents reposPath
-    repos <- liftIO $ filterM isDarcsRepos contents
+    contents    <- liftIO $ getDirectoryContents reposPath
+    repos       <- liftIO $ filterM isDarcsRepos contents
     defaultLayout $ homepage repos $ \name -> RepoR [name]
 
 
