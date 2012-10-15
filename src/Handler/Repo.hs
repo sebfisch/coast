@@ -14,7 +14,7 @@ import           Data.Conduit.Binary (sourceFile)
 import           Data.Maybe          (isJust)
 import           System.Directory    (doesDirectoryExist, doesFileExist,
                                       getDirectoryContents)
-import           System.FilePath     (joinPath, (</>), takeExtension)
+import           System.FilePath     (joinPath, takeExtension, (</>))
 
 import qualified Data.ByteString     as B
 import qualified Data.Text.IO        as T
@@ -89,6 +89,7 @@ guessContentType isText fullPath =
         ,(".jpg",typeJpeg)  ,(".jpeg",typeJpeg) ,(".png",typePng)
         ,(".gif",typeGif)   ,(".svg",typeSvg)   ,(".js",typeJavascript)
         ,(".css",typeCss)   ,(".flv",typeFlv)   ,(".ogv",typeOgv)]
+
 
 readIfTextFile :: Bool -> FilePath -> IO (Maybe Text)
 readIfTextFile isText fullPath
