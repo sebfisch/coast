@@ -1,7 +1,7 @@
 ^{top_navigation}
 
 <div .repos-dir>
-    ^{repos_header}
+    ^{repos_header names}
 
     <table>
         $forall (dir,file) <- contents

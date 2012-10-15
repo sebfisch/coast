@@ -1,12 +1,32 @@
 .repos-dir {
-    padding:    1em;
+    padding:                            1em;
 
     table {
-        width:  100%;
+        width:                          100%;
+        background-color:               #{lightBg};
+        color:                          #{lightText};
+        border:                         solid #{lightBgHigh};    
+
+        tr {
+            border:                     1px solid #{lightBgHigh}
+        }
+
+        th {
+            background-color:           #{darkBg};
+            color:                      #{darkText};        
+        }
 
         th, td {
-            text-align: left;
-            padding:    .5em;
+            text-align:                 left;
+            padding:                    .5em;
         }
+    }
+
+    a.file {
+        color:                          #{lightText};
+    }
+
+    a.directory {
+        font-weight:                    bold;
     }
 }

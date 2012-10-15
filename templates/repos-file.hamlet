@@ -1,7 +1,7 @@
 ^{top_navigation}
 
 <div .repos-file>
-    ^{repos_header}
+    ^{repos_header names}
     
     $maybe text <- maybeText
         <pre>

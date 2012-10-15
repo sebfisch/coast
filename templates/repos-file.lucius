@@ -1,7 +1,9 @@
 .repos-file {
-    padding:    1em;
+    padding:                            1em;
 
-    table {
-        width:  100%;
+    pre {
+        background-color:               #{lightBg};
+        color:                          #{lightText};
+        border:                         1px solid #{lightBgHigh};
     }
 }

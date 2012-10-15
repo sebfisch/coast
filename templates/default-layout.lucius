@@ -1,8 +1,17 @@
 @font-face {
-    font-family: open-dyslexic;
-    src: url('@{StaticR opendyslexic_ttf}'); 
+    font-family:                        open-dyslexic;
+    src:                                url('@{StaticR opendyslexic_ttf}'); 
 }
 
 body, p {
-    font-family:    open-dyslexic;
+    font-family:                        open-dyslexic;
+    color:                              #{lightTextLow}
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color:                              #{lightTextHigh}
+}
+
+a, a:visited, a:active, a:hover {
+    color:                              #{yellow}
 }

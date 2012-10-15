@@ -1,6 +1,7 @@
 module Handler.Repo where
 
 import Import
+import Template
 import System.Directory
 import Data.List
 import Data.Char
@@ -15,20 +16,15 @@ import qualified Data.Text.IO as T
 getRepoR :: [String] -> Handler RepHtml
 getRepoR [] = redirect HomeR
 getRepoR names@(name:others) = do
-    let links = [(MsgHome, HomeR)]
-        top_navigation  = $(widgetFile "top-navigation")
-        repos_header    = $(widgetFile "repos-header")
-        fullPath        = makePath (reposPath:names)
+    let fullPath    = makePath (reposPath:names)
 
     isDir   <- liftIO $ doesDirectoryExist fullPath
     isFile  <- liftIO $ doesFileExist fullPath
 
     if isDir then do
         contents <- liftIO $ getAnnotatedContents (null others) fullPath
-        let makeRoute file = RepoR $ names ++ [file]
-        defaultLayout $ do
-            setTitle $ fromString $ makePath names
-            $(widgetFile "repos-dir")
+        defaultLayout $ repos_dir names contents $
+                            \file -> RepoR $ names ++ [file]
       else if isFile then do
         rawRequested <- isJust <$> lookupGetParam "raw"
         isText <- liftIO $ guessIfTextFile fullPath
@@ -36,9 +32,7 @@ getRepoR names@(name:others) = do
             sendFile (guessContentType isText fullPath) fullPath
           else do
             maybeText <- liftIO $ readIfTextFile isText fullPath
-            defaultLayout $ do
-                setTitle $ fromString $ makePath names
-                $(widgetFile "repos-file")
+            defaultLayout $ repos_file names maybeText
       else notFound
 
 markDirectory :: FilePath -> FilePath -> IO (Bool,FilePath)

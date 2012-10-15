@@ -29,6 +29,8 @@ library
                         Settings
                         Settings.StaticFiles
                         Settings.Development
+                        Template
+                        Template.Solarized
                         Handler.Home
                         Handler.Repo
 
