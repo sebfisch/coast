@@ -43,8 +43,8 @@ top_navigation = $(widgetFile "top-navigation")
     links = [(MsgHome, HomeR)]
 
 
-repos_header :: [String] -> GWidget sub App ()
-repos_header names = do
+repos_header :: [String] -> Bool -> GWidget sub App ()
+repos_header names showRawLink = do
     toWidget $ [lucius|
         h3.repos {
             a, a:visited, a:active, a:hover {
@@ -57,5 +57,8 @@ repos_header names = do
         <h3 .repos>
             $forall subpath <- init $ tail $ inits names
                 / <a href="@{RepoR subpath}">#{last subpath}</a> #
-            / <a href="?raw">#{last names}</a>
+            $if showRawLink
+                / <a href="?raw">#{last names}</a>
+            $else
+                / <a href="@{RepoR names}">#{last names}</a>
     |]
