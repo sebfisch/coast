@@ -15,7 +15,7 @@ module Import
     ) where
 
 import Prelude hiding (writeFile, readFile, head, tail, init, last)
-import Yesod   hiding (Route(..))
+import Yesod   hiding (Route(..), joinPath)
 import Foundation
 #if __GLASGOW_HASKELL__ < 704
 import Data.Monoid (Monoid (mappend, mempty, mconcat))

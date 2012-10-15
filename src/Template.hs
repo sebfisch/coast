@@ -1,13 +1,11 @@
 module Template (
 
-    homepage, repos_dir, repos_file,
-
-    makePath
+    homepage, repos_dir, repos_file
 
     ) where
 
 
-import Import
+import Import                   -- Yesod's Prelude
 import Template.Solarized       -- CSS color names
 
 import Data.String              (fromString)

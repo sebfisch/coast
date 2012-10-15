@@ -5,11 +5,12 @@ module Handler.Home (
     ) where
 
 
-import Import
-import Template
+import Import                   -- Yesod's Prelude
+import Template                 (homepage)
 
 import Control.Monad            (filterM)
 import System.Directory         (getDirectoryContents, doesDirectoryExist)
+import System.FilePath          ((</>))
 
 
 getHomeR :: Handler RepHtml
@@ -22,10 +23,9 @@ getHomeR = do
 isDarcsRepos :: FilePath -> IO Bool
 isDarcsRepos name = do
     isDir <- doesDirectoryExist fullName
-    if isDir then do
-        let darcsPath = makePath [fullName,"_darcs"]
-        doesDirectoryExist darcsPath
+    if isDir then
+        doesDirectoryExist $ fullName </> "_darcs"
       else
         return False
   where
-    fullName = makePath [reposPath, name]
+    fullName = reposPath </> name
