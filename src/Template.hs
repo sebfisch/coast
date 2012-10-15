@@ -12,6 +12,7 @@ import Template.Solarized       -- CSS color names
 
 import Data.String              (fromString)
 import Data.List                (inits, tail, last, intercalate)
+import System.FilePath          (pathSeparator)
 import Text.Lucius              (luciusFile)
 
 
@@ -58,5 +59,5 @@ repos_header names = do
     |]
 
 
-makePath :: [FilePath] -> FilePath
-makePath names = intercalate "/" names
+makePath :: [String] -> FilePath
+makePath names = intercalate [pathSeparator] names

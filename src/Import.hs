@@ -29,7 +29,8 @@ import Settings.Development
 
 import Data.Conduit             (GLSink, await, leftover)
 import Data.Function            (on)
-import Data.List                (intercalate, sortBy)
+import Data.List                (sortBy)
+import System.FilePath          ((</>))
 
 
 #if __GLASGOW_HASKELL__ < 704
@@ -47,5 +48,5 @@ peek :: Monad m => GLSink a m (Maybe a)
 peek = await >>= maybe (return Nothing) (\x -> leftover x >> return (Just x))
 
 
-reposPath :: String
-reposPath = "var/repos"
+reposPath :: FilePath
+reposPath = "var" </> "repos"
