@@ -7,9 +7,14 @@
         $forall entry <- contents
             <tr>
                 <td>
-                    $if isDirectory entry
-                        <a .directory href="@{makeRoute (fileName entry)}">
-                            #{fileName entry}
-                    $else
-                        <a .file href="@{makeRoute $ fileName entry}">
-                            #{fileName entry}
+                    $case entry
+                        $of Dir name
+                            <a .directory href="@{makeRoute name}">
+                                #{name}
+                        $of File name maybeInfo
+                            $maybe info <- maybeInfo
+                                <a .file href="@{makeRoute name}">
+                                    #{name}
+                            $nothing
+                                <a .file href="@{makeRoute name}">
+                                    #{name}

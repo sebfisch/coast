@@ -6,6 +6,8 @@ module Handler.Repo (
 
 
 import           Import
+
+import           Repository.Darcs    (Repo, darcsRepo, lastChangeInfo)
 import           Template            (DirEntry (..), repos_dir, repos_file)
 
 import           Data.Char           (ord, toLower)
@@ -22,14 +24,15 @@ import qualified Data.Text.IO        as T
 
 getRepoR :: [String] -> Handler RepHtml
 getRepoR [] = redirect HomeR
-getRepoR names@(_:others) = do
-    let fullPath = joinPath (reposPath:names)
+getRepoR names@(name:others) = do
+    let repoPath = joinPath [reposPath,name]
+        fullPath = joinPath (reposPath:names)
 
     isDir   <- liftIO $ doesDirectoryExist fullPath
     isFile  <- liftIO $ doesFileExist fullPath
 
     if isDir then do
-        contents <- liftIO $ getAnnotatedContents (null others) fullPath
+        contents <- liftIO $ getAnnotatedContents fullPath repoPath others
         defaultLayout $ repos_dir names contents $
                             \file -> RepoR $ names ++ [file]
       else if isFile then do
@@ -44,20 +47,23 @@ getRepoR names@(_:others) = do
         notFound
 
 
-getAnnotatedContents :: Bool -> FilePath -> IO [DirEntry]
-getAnnotatedContents isTopLevel fullPath = do
+getAnnotatedContents :: FilePath -> FilePath -> [String] -> IO [DirEntry]
+getAnnotatedContents fullPath repoPath dirs = do
     contents <- getDirectoryContents fullPath
     let filtered    = [file | file <- contents, not $ file `elem` hiddenFiles]
         sorted      = sortOn (map toLower) filtered
-    mapM (markDirectory fullPath) sorted
+    mapM (annotate fullPath (darcsRepo repoPath) dirs) sorted
   where
-    hiddenFiles = "." : if isTopLevel then ["..","_darcs"] else []
+    hiddenFiles = "." : if null dirs then ["..","_darcs"] else []
 
 
-markDirectory :: FilePath -> FilePath -> IO DirEntry
-markDirectory prefix file = do
-    isDir <- liftIO $ doesDirectoryExist $ prefix </> file
-    return $ DirEntry isDir file
+annotate :: FilePath -> Repo -> [String] -> String -> IO DirEntry
+annotate prefix repo dirs name = do
+    isDir <- liftIO $ doesDirectoryExist $ prefix </> name
+    if isDir then
+        return $ Dir name
+      else
+        File name <$> lastChangeInfo repo (joinPath $ dirs ++ [name])
 
 
 guessIfTextFile :: FilePath -> IO Bool
