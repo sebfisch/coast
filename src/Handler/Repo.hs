@@ -31,6 +31,7 @@ getRepoR (name:path)    = do
         Nothing   -> notFound
         Just repo -> serveRepo repo name path
 
+
 serveRepo :: Repository -> String -> [String] -> Handler RepHtml
 serveRepo repo name path = do
     let fullPath = joinPath (repoDir repo:path)

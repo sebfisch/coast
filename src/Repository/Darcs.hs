@@ -6,6 +6,7 @@ import           Repository.Interface
 import           System.Directory     (doesDirectoryExist)
 import           System.FilePath      ((</>))
 
+
 newtype DarcsRepo   = DarcsRepo     { darcsRepoDir          :: FilePath     }
 
 
