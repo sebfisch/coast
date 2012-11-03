@@ -1,23 +1,23 @@
-module Repository.Darcs (
-
-    DarcsRepo, darcsRepo,
-
-    module Repository
-
-    ) where
+module Repository.Darcs where
 
 
 import           Import
-import           Repository
-
+import           Repository.Interface
+import           System.Directory     (doesDirectoryExist)
+import           System.FilePath      ((</>))
 
 newtype DarcsRepo   = DarcsRepo     { darcsRepoDir          :: FilePath     }
 
 
-darcsRepo :: FilePath -> Repo
-darcsRepo = someRepo . DarcsRepo
-
-
-instance Repository DarcsRepo where
+instance IsRepository DarcsRepo where
     repoDir             = darcsRepoDir
     lastChangeInfo _ _  = return Nothing
+
+
+isDarcsRepository :: FilePath -> IO Bool
+isDarcsRepository path = do
+    isDir <- doesDirectoryExist path
+    if isDir then
+        doesDirectoryExist $ path </> "_darcs"
+      else
+        return False

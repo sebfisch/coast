@@ -1,49 +1,31 @@
-module Repository (
+module Repository
 
-    Repository(..), Repo, someRepo
+    ( Repository
+
+    , darcsRepo         -- FilePath -> Repository
+
+    , repoDir           -- Repository -> FilePath
+
+    , ChangeInfo
+
+    , lastChangeInfo    -- Repository -> FilePath -> IO (Maybe ChangeInfo)
+
+    , changeTime        -- ChangeInfo -> CalendarTime
+    , changeAuthor      -- ChangeInfo -> Text
+    , changeSummary     -- ChangeInfo -> Text
+    , changeMessage     -- ChangeInfo -> Text
 
     ) where
 
 
 import           Import
 
-import           System.Time  (CalendarTime)
+import           Repository.Darcs
+import           Repository.Interface
 
 
-class Repository repo
-  where
-    data ChangeInfo repo
-
-    repoDir         :: repo -> FilePath
-    lastChangeInfo  :: repo -> FilePath -> IO (Maybe (ChangeInfo repo))
-
-    changeTime      :: ChangeInfo repo -> CalendarTime
-    changeAuthor    :: ChangeInfo repo -> Text
-    changeSummary   :: ChangeInfo repo -> Text
-    changeMessage   :: ChangeInfo repo -> Text
+type ChangeInfo = ChangeInfoType Repository
 
 
-data Repo where
-    Repo :: Repository repo => repo -> Repo
-
-
-someRepo :: Repository repo => repo -> Repo
-someRepo = Repo
-
-
-instance Repository Repo where
-
-    data ChangeInfo Repo where
-        Info :: Repository repo => ChangeInfo repo -> ChangeInfo Repo
-
-    repoDir         (Repo repo)         = repoDir repo
-    lastChangeInfo  (Repo repo) file    = Info <$$> lastChangeInfo repo file
-
-    changeTime      (Info info)         = changeTime    info
-    changeAuthor    (Info info)         = changeAuthor  info
-    changeSummary   (Info info)         = changeSummary info
-    changeMessage   (Info info)         = changeMessage info
-
-
-(<$$>) :: (Functor f, Functor g) => (a -> b) -> f (g a) -> f (g b)
-(<$$>) = fmap . fmap
+darcsRepo :: FilePath -> Repository
+darcsRepo = Repo . DarcsRepo

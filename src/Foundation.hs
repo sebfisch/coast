@@ -11,9 +11,12 @@ module Foundation
     , module Settings
     , module Model
     , getExtra
+    , getRepositories
+    , lookupRepository
     ) where
 
 import Prelude
+import Data.Functor ((<$>))
 import Yesod
 import Yesod.Static
 import Yesod.Auth
@@ -33,15 +36,17 @@ import Text.Jasmine (minifym)
 import Web.ClientSession (getKey)
 import Text.Hamlet (hamletFile)
 import Template.Solarized
+import Repository.Interface (Repository)
 
 type Strings = [String]
 
 data App = App
-    { settings :: AppConfig DefaultEnv Extra
-    , getStatic :: Static -- ^ Settings for static file serving.
-    , connPool :: Database.Persist.Store.PersistConfigPool Settings.PersistConfig -- ^ Database connection pool.
-    , httpManager :: Manager
-    , persistConfig :: Settings.PersistConfig
+    { settings          :: AppConfig DefaultEnv Extra
+    , getStatic         :: Static
+    , connPool          :: Database.Persist.Store.PersistConfigPool Settings.PersistConfig
+    , httpManager       :: Manager
+    , persistConfig     :: Settings.PersistConfig
+    , repositories      :: [(String,Repository)]
     }
 
 mkMessage "App" "messages" "en"
@@ -138,3 +143,9 @@ instance RenderMessage App FormMessage where
 -- | Get the 'Extra' value, used to hold data from the settings.yml file.
 getExtra :: Handler Extra
 getExtra = fmap (appExtra . settings) getYesod
+
+getRepositories :: Handler [String]
+getRepositories = map fst . repositories <$> getYesod
+
+lookupRepository :: String -> Handler (Maybe Repository)
+lookupRepository name = lookup name . repositories <$> getYesod

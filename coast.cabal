@@ -35,6 +35,7 @@ library
                         Handler.Home
                         Handler.Repo
                         Repository
+                        Repository.Interface
                         Repository.Darcs
 
     if flag(dev) || flag(library-only)

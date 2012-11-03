@@ -16,6 +16,12 @@ import qualified Database.Persist.Store
 import Database.Persist.GenericSql (runMigration)
 import Network.HTTP.Conduit (newManager, def)
 
+import Repository
+import Repository.Darcs (isDarcsRepository)
+import Control.Monad    (filterM)
+import System.Directory (getDirectoryContents)
+import System.FilePath  ((</>))
+
 -- Import all relevant handler modules here.
 -- Don't forget to add new modules to your cabal file!
 import Handler.Home
@@ -45,7 +51,8 @@ makeFoundation conf = do
               Database.Persist.Store.applyEnv
     p <- Database.Persist.Store.createPoolConfig (dbconf :: Settings.PersistConfig)
     Database.Persist.Store.runPool dbconf (runMigration migrateAll) p
-    return $ App conf s p manager dbconf
+    repos <- readDarcsRepositories reposPath
+    return $ App conf s p manager dbconf repos
 
 -- for yesod devel
 getApplicationDev :: IO (Int, Application)
@@ -55,3 +62,11 @@ getApplicationDev =
     loader = loadConfig (configSettings Development)
         { csParseExtra = parseExtra
         }
+
+readDarcsRepositories :: FilePath -> IO [(String,Repository)]
+readDarcsRepositories path = do
+    contents    <- liftIO $ getDirectoryContents path
+    repos       <- liftIO $ filterM isDarcsRepo contents
+    return [(name, darcsRepo (path </> name)) | name <- repos]
+  where
+    isDarcsRepo name = isDarcsRepository (path </> name)
