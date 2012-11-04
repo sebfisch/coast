@@ -17,6 +17,8 @@ module Foundation
 
 import Prelude
 import Data.Functor ((<$>))
+import Data.Monoid (Monoid, mappend)
+import Data.Text (Text, pack)
 import Yesod
 import Yesod.Static
 import Yesod.Auth
@@ -38,6 +40,10 @@ import Text.Hamlet (hamletFile)
 import Template.Solarized
 import Repository.Interface (Repository)
 
+infixr 5 <>
+(<>) :: Monoid m => m -> m -> m
+(<>) = mappend
+
 type Strings = [String]
 
 data App = App
@@ -50,6 +56,15 @@ data App = App
     }
 
 mkMessage "App" "messages" "en"
+
+number :: Int -> Text
+number n = maybe (pack $ show n) id . lookup n . zip [1..] $
+    ["one","two","three","four","five","six","seven"
+    ,"eight","nine","ten","eleven","twelve"]
+
+plural :: Int -> Text -> Text -> Text
+plural 1 x _ = x
+plural _ _ x = x
 
 mkYesodData "App" $(parseRoutesFile "config/routes")
 

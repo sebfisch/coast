@@ -24,8 +24,5 @@ import           Repository.Darcs
 import           Repository.Interface
 
 
-type ChangeInfo = ChangeInfoType Repository
-
-
 darcsRepo :: FilePath -> Repository
 darcsRepo = Repo . DarcsRepo

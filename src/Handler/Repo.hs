@@ -10,9 +10,10 @@ import           Import
 import           Repository          (Repository, lastChangeInfo, repoDir)
 import           Template            (DirEntry (..), repos_dir, repos_file)
 
-import           Data.Char           (ord, toLower)
+import           Data.Char           (ord)
 import           Data.Conduit        (runResourceT, ($$))
 import           Data.Conduit.Binary (sourceFile)
+import           Data.List           (sort)
 import           Data.Maybe          (isJust)
 import           System.Directory    (doesDirectoryExist, doesFileExist,
                                       getDirectoryContents)
@@ -62,9 +63,8 @@ getAnnotatedContents repo path = do
     contents <- getDirectoryContents fullPath
 
     let filtered    = [file | file <- contents, not $ file `elem` hiddenFiles]
-        sorted      = sortOn (map toLower) filtered
 
-    mapM (annotate repo path) sorted
+    sort <$> mapM (annotate repo path) filtered
   where
     hiddenFiles = "." : if null path then ["..","_darcs"] else []
 
@@ -78,7 +78,7 @@ annotate repo path name = do
     if isDir then
         return $ Dir name
       else
-        File name <$> lastChangeInfo repo (joinPath $ path ++ [name])
+        File name <$> lastChangeInfo repo (name)
 
 
 guessIfTextFile :: FilePath -> IO Bool
