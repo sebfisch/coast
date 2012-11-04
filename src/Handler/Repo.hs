@@ -78,7 +78,7 @@ annotate repo path name = do
     if isDir then
         return $ Dir name
       else
-        File name <$> lastChangeInfo repo (name)
+        File name <$> lastChangeInfo repo (joinPath $ path ++ [name])
 
 
 guessIfTextFile :: FilePath -> IO Bool

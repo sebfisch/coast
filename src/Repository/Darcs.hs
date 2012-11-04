@@ -31,11 +31,11 @@ instance IsRepository DarcsRepo where
     -- TODO: don't search through patches again for every file in directory
     lastChangeInfo repo file =
         withRepositoryDirectory [] (repoDir repo) $ RepoJob $ \darcs -> do
-        patches <- mapRL seal2 . newset2RL <$> readRepo darcs
-        -- patches <- filterPatches darcs [file] patches -- darcs 2.9+
-        let wanted  = unseal2 (any (equalFilePath file) . listTouchedFiles)
-            patch   = listToMaybe . filter wanted $ patches
-        return $ unseal2 info <$> patch
+            patches <- mapRL seal2 . newset2RL <$> readRepo darcs
+            -- patches <- filterPatches darcs [file] patches -- darcs 2.9+
+            let wanted = unseal2 (any (equalFilePath file) . listTouchedFiles)
+                patch  = listToMaybe . filter wanted $ patches
+            return $ unseal2 info <$> patch
 
 
 isDarcsRepository :: FilePath -> IO Bool
