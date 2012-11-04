@@ -4,25 +4,21 @@
     ^{repos_header names False}
 
     <table>
-        $forall entry <- contents
+        $forall DirEntry isFile name maybeInfo <- contents
             <tr>
-                $case entry
-                    $of Dir name
-                        <td colspan="4">
-                            <a .directory href="@{makeRoute name}">
-                                #{name}
-                    $of File name maybeInfo
-                        $maybe info <- maybeInfo
-                            <td>
-                                <a .file href="@{makeRoute name}">
-                                    #{name}
-                            <td>
-                                _{timeAgo (changeTime info)}
-                            <td>
-                                #{changeSummary info}
-                            <td>
-                                #{changeAuthor info}
-                        $nothing
-                            <td colspan="4">
-                                <a .file href="@{makeRoute name}">
-                                    #{name}
+                <td>
+                    $if isFile
+                        <a .file href="@{makeRoute name}">
+                            #{name}
+                    $else
+                        <a .directory href="@{makeRoute name}">
+                            #{name}
+                $maybe info <- maybeInfo
+                    <td>
+                        _{timeAgo (changeTime info)}
+                    <td>
+                        #{changeSummary info}
+                    <td>
+                        #{changeAuthor info}
+                $nothing
+                    <td colspan="3">

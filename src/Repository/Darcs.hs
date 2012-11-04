@@ -14,9 +14,10 @@ import           Darcs.Repository         (RepoJob (..), readRepo,
 import           Darcs.Witnesses.Ordered  (mapRL)
 import           Darcs.Witnesses.Sealed   (seal2, unseal2)
 
+import           Data.List                (isPrefixOf)
 import           Data.Maybe               (listToMaybe)
 import           System.Directory         (doesDirectoryExist)
-import           System.FilePath          ((</>), equalFilePath)
+import           System.FilePath          (normalise, (</>))
 
 
 newtype DarcsRepo   = DarcsRepo     { darcsRepoDir          :: FilePath     }
@@ -29,11 +30,12 @@ instance IsRepository DarcsRepo where
 
     -- http://stackoverflow.com/questions/12941793/how-to-use-the-darcs-library-to-query-information-about-patches
     -- TODO: don't search through patches again for every file in directory
-    lastChangeInfo repo file =
+    lastChangeInfo repo name =
         withRepositoryDirectory [] (repoDir repo) $ RepoJob $ \darcs -> do
             patches <- mapRL seal2 . newset2RL <$> readRepo darcs
-            -- patches <- filterPatches darcs [file] patches -- darcs 2.9+
-            let wanted = unseal2 (any (equalFilePath file) . listTouchedFiles)
+            -- patches <- filterPatches darcs [name] patches -- darcs 2.9+
+            let wanted = unseal2
+                    (any (isPrefixOf name . normalise) . listTouchedFiles)
                 patch  = listToMaybe . filter wanted $ patches
             return $ unseal2 info <$> patch
 

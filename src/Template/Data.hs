@@ -3,26 +3,23 @@ module Template.Data where
 
 import           Import
 
-import           Control.Arrow (second)
-import           Data.Char     (toLower)
 import           Data.Function (on)
 import           Repository    (ChangeInfo)
 
 
-data    DirEntry    = Dir       { dirName           :: String
+data    DirEntry    = DirEntry  { isFile            :: Bool
+                                , entryName         :: String
+                                , entryChangeInfo   :: Maybe ChangeInfo
                                 }
-                    | File      { fileName          :: String
-                                , fileChangeInfo    :: Maybe ChangeInfo
-                                }
+
 
 instance Eq DirEntry where
     (==) = (==) `on` typeAndName
 
 
 instance Ord DirEntry where
-    compare = compare `on` second (map toLower) . typeAndName
+    compare = compare `on` typeAndName
 
 
 typeAndName :: DirEntry -> (Bool,String)
-typeAndName (Dir name)      = (False,name)
-typeAndName (File name _)   = (True,name)
+typeAndName DirEntry{..} = (isFile, entryName)

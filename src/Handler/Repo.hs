@@ -72,13 +72,8 @@ getAnnotatedContents repo path = do
 annotate :: Repository -> [String] -> String -> IO DirEntry
 annotate repo path name = do
     let prefix = joinPath (repoDir repo:path)
-
-    isDir <- liftIO $ doesDirectoryExist $ prefix </> name
-
-    if isDir then
-        return $ Dir name
-      else
-        File name <$> lastChangeInfo repo (joinPath $ path ++ [name])
+    isFile <- liftIO $ doesFileExist $ prefix </> name
+    DirEntry isFile name <$> lastChangeInfo repo (joinPath $ path ++ [name])
 
 
 guessIfTextFile :: FilePath -> IO Bool
