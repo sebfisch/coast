@@ -85,9 +85,9 @@ timeDiffMsg now before
     CalendarTime{..}    = toUTCTime now
     TimeDiff{..}        = normalizeTimeDiff $ diffClockTimes now before
 
-    years   = approx ctYear                     tdYear  12  tdMonth
-    months  = approx (succ $ fromEnum ctMonth)  tdMonth 30  tdDay
-    days    = approx ctDay                      tdDay   24  tdHour
+    years   = approx tdYear     12  tdMonth (fromEnum ctMonth)
+    months  = approx tdMonth    30  tdDay   ctDay
+    days    = approx tdDay      24  tdHour  ctHour
     hours   = tdHour
     minutes = tdMin
 
@@ -95,9 +95,9 @@ timeDiffMsg now before
         | max 4 (fromWeekDay ctWDay) <= days && days <= 7   = 1
         | otherwise                                         = days `div` 7
 
-    approx :: Int -> Int -> Double -> Int -> Int
-    approx current unit parts sub
-        | unit == 0 && sub >= current   = 1
+    approx :: Int -> Double -> Int -> Int -> Int
+    approx unit parts sub current
+        | unit == 0 && sub > current    = 1
         | otherwise                     = round $ fromIntegral unit
                                                 + fromIntegral sub / parts
     fromWeekDay Sunday  = 7
