@@ -80,3 +80,10 @@ timeDiffMsg TimeDiff{..}
     | tdHour    > 0 = MsgHoursAgo tdHour
     | tdMin     > 0 = MsgMinutesAgo tdMin
     | otherwise     = MsgJustNow
+
+
+timeClass :: AppMessage -> Text
+timeClass (MsgYearsAgo _)   = "old"
+timeClass (MsgMonthsAgo _)  = "old"
+timeClass (MsgWeeksAgo _)   = "old"
+timeClass _                 = "new"

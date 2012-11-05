@@ -20,13 +20,18 @@
             text-align:                 left;
             padding:                    .5em;
         }
+
+        td.old {
+            color:                      #{lightTextLow};
+        }
     }
 
     a.file {
-        color:                          #{lightText};
+        color:                          #{green};
     }
 
     a.directory {
         font-weight:                    bold;
+        color:                          #{yellow};
     }
 }
