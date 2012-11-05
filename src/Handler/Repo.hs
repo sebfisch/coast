@@ -7,9 +7,11 @@ module Handler.Repo (
 
 import           Import
 
-import           Repository          (Repository, lastChangeInfo, repoDir)
+import           Repository          (ChangeInfo, Repository, changeInfo,
+                                      recentChanges, repoDir, (<$$>))
 import           Template            (DirEntry (..), repos_dir, repos_file)
 
+import           Control.Arrow       (first, second)
 import           Data.Char           (ord)
 import           Data.Conduit        (runResourceT, ($$))
 import           Data.Conduit.Binary (sourceFile)
@@ -17,8 +19,9 @@ import           Data.List           (sort)
 import           Data.Maybe          (isJust)
 import           System.Directory    (doesDirectoryExist, doesFileExist,
                                       getDirectoryContents)
-import           System.FilePath     (addTrailingPathSeparator, joinPath,
-                                      takeExtension, (</>))
+import           System.FilePath     (addTrailingPathSeparator,
+                                      dropTrailingPathSeparator, joinPath,
+                                      takeExtension, takeFileName, (</>))
 
 import qualified Data.ByteString     as B
 import qualified Data.Text.IO        as T
@@ -42,7 +45,7 @@ serveRepo repo name path = do
     isFile  <- liftIO $ doesFileExist fullPath
 
     if isDir then do
-        contents <- liftIO $ getAnnotatedContents repo path
+        contents <- liftIO $ getAnnotatedContents repo (joinPath path)
         defaultLayout $ repos_dir (name:path) contents $
                             \file -> RepoR $ name : path ++ [file]
       else if isFile then do
@@ -57,27 +60,38 @@ serveRepo repo name path = do
         notFound
 
 
-getAnnotatedContents :: Repository -> [String] -> IO [DirEntry]
+getAnnotatedContents :: Repository -> FilePath -> IO [DirEntry]
 getAnnotatedContents repo path = do
-    let fullPath = joinPath (repoDir repo:path)
-
     contents <- getDirectoryContents fullPath
 
-    let filtered    = [file | file <- contents, not $ file `elem` hiddenFiles]
+    let filtered = [file | file <- contents, not $ file `elem` hiddenFiles]
 
-    sort <$> mapM (annotate repo path) filtered
+    (flags,files)   <- unzip <$> mapM (extend basePath path) filtered
+    changeInfos     <- second changeInfo <$$> recentChanges repo files
+
+    return $ sort $ zipWith (makeDirEntry changeInfos) flags filtered
   where
+    basePath    = repoDir repo
+    fullPath    = basePath </> path
     hiddenFiles = "." : if null path then ["..","_darcs"] else []
 
 
-annotate :: Repository -> [String] -> String -> IO DirEntry
-annotate repo path name = do
-    let prefix = joinPath (repoDir repo:path)
-    isFile <- liftIO $ doesFileExist $ prefix </> name
-    let fullName = (if isFile then id else addTrailingPathSeparator) $
-                    joinPath $ path ++ [name]
-    DirEntry isFile name <$> lastChangeInfo repo fullName
+extend :: FilePath -> FilePath -> String -> IO (Bool,FilePath)
+extend base prefix name = do
+    isFile <- doesFileExist $ base </> relativeName
+    if isFile then
+        return (True, relativeName)
+      else
+        return (False, addTrailingPathSeparator relativeName)
+  where
+    relativeName = prefix </> name
 
+
+makeDirEntry :: [(String, ChangeInfo)] -> Bool -> String -> DirEntry
+makeDirEntry changeInfos isFile name =
+    DirEntry isFile name $ lookupOn baseName name changeInfos
+  where
+    baseName = takeFileName . dropTrailingPathSeparator
 
 guessIfTextFile :: FilePath -> IO Bool
 guessIfTextFile fullPath = runResourceT $ do
@@ -114,3 +128,7 @@ readIfTextFile :: Bool -> FilePath -> IO (Maybe Text)
 readIfTextFile isText fullPath
     | isText    = Just <$> T.readFile fullPath
     | otherwise = return Nothing
+
+
+lookupOn :: Eq k => (a -> k) -> k -> [(a,b)] -> Maybe b
+lookupOn f k = lookup k . map (first f)

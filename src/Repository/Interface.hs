@@ -1,4 +1,13 @@
-module Repository.Interface where
+module Repository.Interface
+    ( Repository, Change, ChangeInfo
+
+    , someRepo
+
+    , IsRepository(..), IsChange(..), IsChangeInfo(..)
+    
+    , (<$$>)
+
+    ) where
 
 
 import           Prelude
@@ -9,11 +18,18 @@ import           Data.Text        (Text, pack)
 import           System.Time      (CalendarTime)
 
 
-class IsChangeInfo (ChangeInfoType repo) => IsRepository repo where
-    type ChangeInfoType repo
+class IsChange (ChangeType repo) => IsRepository repo where
+    type ChangeType repo
 
     repoDir         :: repo -> FilePath
-    lastChangeInfo  :: repo -> FilePath -> IO (Maybe (ChangeInfoType repo))
+    reverseChanges  :: repo -> IO [ChangeType repo]
+
+
+class IsChangeInfo (ChangeInfoType change) => IsChange change where
+    type ChangeInfoType change
+
+    changedFiles    :: change -> [FilePath]
+    changeInfo      :: change -> ChangeInfoType change
 
 
 class IsChangeInfo info where
@@ -27,22 +43,37 @@ data Repository where
     Repo :: IsRepository repo => repo -> Repository
 
 
+someRepo :: IsRepository repo => repo -> Repository
+someRepo = Repo
+
+
+instance IsRepository Repository where
+    type ChangeType Repository  = Change
+
+    repoDir         (Repo repo) = repoDir repo
+    reverseChanges  (Repo repo) = Change <$$> reverseChanges repo
+
+
+data Change where
+    Change :: IsChange change => change -> Change
+
+
+instance IsChange Change where
+    type ChangeInfoType Change  = ChangeInfo
+
+    changedFiles    (Change c)  = changedFiles c
+    changeInfo      (Change c)  = Info $ changeInfo c
+
+
 data ChangeInfo where
     Info :: IsChangeInfo info => info -> ChangeInfo
 
 
-instance IsRepository Repository where
-    type ChangeInfoType Repository = ChangeInfo
-
-    repoDir         (Repo repo)         = repoDir repo
-    lastChangeInfo  (Repo repo) file    = Info <$$> lastChangeInfo repo file
-
-
 instance IsChangeInfo ChangeInfo where
-    changeTime      (Info info)         = changeTime    info
-    changeAuthor    (Info info)         = changeAuthor  info
-    changeSummary   (Info info)         = changeSummary info
-    changeMessage   (Info info)         = changeMessage info
+    changeTime      (Info info) = changeTime    info
+    changeAuthor    (Info info) = changeAuthor  info
+    changeSummary   (Info info) = changeSummary info
+    changeMessage   (Info info) = changeMessage info
 
 
 (<$$>) :: (Functor f, Functor g) => (a -> b) -> f (g a) -> f (g b)
