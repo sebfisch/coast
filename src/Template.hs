@@ -7,18 +7,20 @@ module Template (
     ) where
 
 
-import Import                   hiding (fileName)
-import Template.Solarized       -- CSS color names
-import Template.Data            -- custom data types used in templates
+import           Import             hiding (fileName)
+import           Template.Data
+import           Template.Solarized
 
-import Repository               (changeTime, changeAuthor, changeSummary)
+import           Repository         (changeAuthor, changeSummary, changeTime)
 
-import Data.String              (fromString)
-import Data.List                (inits, init, tail, last)
-import System.FilePath          (joinPath)
-import System.Time              (TimeDiff(..), getClockTime, toClockTime
-                                ,diffClockTimes, normalizeTimeDiff)
-import Text.Lucius              (luciusFile)
+import           Data.List          (init, inits, last, tail)
+import           Data.String        (fromString)
+import           System.FilePath    (joinPath)
+import           System.Time        (CalendarTime (..), ClockTime, Day (..),
+                                     TimeDiff (..), diffClockTimes,
+                                     getClockTime, normalizeTimeDiff,
+                                     toClockTime, toUTCTime)
+import           Text.Lucius        (luciusFile)
 
 
 homepage :: [String] -> (String -> Route App) -> GWidget sub App ()
@@ -33,8 +35,7 @@ repos_dir   :: [String] -> [DirEntry] -> (String -> Route App)
 repos_dir names contents makeRoute = do
     setTitle $ fromString $ joinPath names
     now <- liftIO $ getClockTime
-    let timeAgo =
-            timeDiffMsg . normalizeTimeDiff . diffClockTimes now . toClockTime
+    let timeAgo = timeDiffMsg now . toClockTime
     $(widgetFile "repos-dir")
 
 
@@ -71,19 +72,40 @@ repos_header names showRawLink = do
     |]
 
 
-timeDiffMsg :: TimeDiff -> AppMessage
-timeDiffMsg TimeDiff{..}
-    | tdYear    > 0 = MsgYearsAgo tdYear
-    | tdMonth   > 0 = MsgMonthsAgo tdMonth
-    | tdDay     > 6 = MsgWeeksAgo (tdDay `div` 7)
-    | tdDay     > 0 = MsgDaysAgo tdDay
-    | tdHour    > 0 = MsgHoursAgo tdHour
-    | tdMin     > 0 = MsgMinutesAgo tdMin
+timeDiffMsg :: ClockTime -> ClockTime -> AppMessage
+timeDiffMsg now before
+    | years   > 0   = MsgYearsAgo years
+    | months  > 0   = MsgMonthsAgo months
+    | weeks   > 0   = MsgWeeksAgo weeks
+    | days    > 0   = MsgDaysAgo days
+    | hours   > 0   = MsgHoursAgo hours
+    | minutes > 0   = MsgMinutesAgo minutes
     | otherwise     = MsgJustNow
+  where
+    CalendarTime{..}    = toUTCTime now
+    TimeDiff{..}        = normalizeTimeDiff $ diffClockTimes now before
+
+    years   = approx ctYear                     tdYear  12  tdMonth
+    months  = approx (succ $ fromEnum ctMonth)  tdMonth 30  tdDay
+    days    = approx ctDay                      tdDay   24  tdHour
+    hours   = approx ctHour                     tdHour  60  tdMin
+    minutes = approx ctMin                      tdMin   60  tdSec
+
+    weeks   | fromWeekDay ctWDay <= days && days <= 7   = 1
+            | otherwise                                 = days `div` 7
+
+    approx :: Int -> Int -> Double -> Int -> Int
+    approx current unit parts sub
+        | unit == 0 && sub >= current   = 1
+        | otherwise                     = round $ fromIntegral unit
+                                                + fromIntegral sub / parts
+
+    fromWeekDay Sunday  = 7
+    fromWeekDay weekDay = fromEnum weekDay
 
 
 timeClass :: AppMessage -> Text
 timeClass (MsgYearsAgo _)   = "old"
 timeClass (MsgMonthsAgo _)  = "old"
-timeClass (MsgWeeksAgo _)   = "old"
+timeClass (MsgWeeksAgo w)   = if w > 1 then "old" else "new"
 timeClass _                 = "new"
