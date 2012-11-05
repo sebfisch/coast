@@ -15,6 +15,7 @@ import           Repository         (changeAuthor, changeSummary, changeTime)
 
 import           Data.List          (init, inits, last, tail)
 import           Data.String        (fromString)
+import           Data.Text          (compareLength, take)
 import           System.FilePath    (joinPath)
 import           System.Time        (CalendarTime (..), ClockTime, Day (..),
                                      TimeDiff (..), diffClockTimes,
@@ -109,3 +110,8 @@ timeClass (MsgYearsAgo _)   = "old"
 timeClass (MsgMonthsAgo _)  = "old"
 timeClass (MsgWeeksAgo w)   = if w > 1 then "old" else "new"
 timeClass _                 = "new"
+
+
+truncateAt :: Int -> Text -> Text
+truncateAt n s  | compareLength s n == GT   = Data.Text.take n s <> "..."
+                | otherwise                 = s

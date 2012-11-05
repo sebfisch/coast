@@ -14,11 +14,11 @@
                         <a .directory href="@{makeRoute name}">
                             #{name}
                 $maybe info <- maybeInfo
-                    $with ago <- timeAgo (changeTime info)
+                    $with ago <- timeAgo $ changeTime info
                         <td class="#{timeClass ago}">
                             _{ago}
                         <td class="#{timeClass ago}">
-                            #{changeSummary info}
+                            #{truncateAt 50 $ changeSummary info}
                         <td class="#{timeClass ago}">
                             #{changeAuthor info}
                 $nothing

@@ -93,6 +93,7 @@ makeDirEntry changeInfos isFile name =
   where
     baseName = takeFileName . dropTrailingPathSeparator
 
+
 guessIfTextFile :: FilePath -> IO Bool
 guessIfTextFile fullPath = runResourceT $ do
     sourceFile fullPath $$ do
