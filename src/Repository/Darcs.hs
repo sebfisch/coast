@@ -17,7 +17,8 @@ import           Darcs.Witnesses.Sealed   (seal2, unseal2)
 import           Data.List                (isPrefixOf)
 import           Data.Maybe               (listToMaybe)
 import           System.Directory         (doesDirectoryExist)
-import           System.FilePath          (normalise, (</>))
+import           System.FilePath          (dropTrailingPathSeparator,
+                                           normalise, (</>))
 
 
 newtype DarcsRepo   = DarcsRepo     { darcsRepoDir          :: FilePath     }
@@ -35,7 +36,7 @@ instance IsRepository DarcsRepo where
             patches <- mapRL seal2 . newset2RL <$> readRepo darcs
             -- patches <- filterPatches darcs [name] patches -- darcs 2.9+
             let wanted = unseal2
-                    (any (isPrefixOf name . normalise) . listTouchedFiles)
+                    (any (isPartOf name . normalise) . listTouchedFiles)
                 patch  = listToMaybe . filter wanted $ patches
             return $ unseal2 info <$> patch
 
@@ -47,3 +48,9 @@ isDarcsRepository path = do
         doesDirectoryExist $ path </> "_darcs"
       else
         return False
+
+
+isPartOf :: FilePath -> FilePath -> Bool
+isPartOf name changed =
+    isPrefixOf name changed ||
+    dropTrailingPathSeparator name == changed

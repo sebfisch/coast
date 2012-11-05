@@ -100,7 +100,6 @@ timeDiffMsg now before
         | unit == 0 && sub >= current   = 1
         | otherwise                     = round $ fromIntegral unit
                                                 + fromIntegral sub / parts
-
     fromWeekDay Sunday  = 7
     fromWeekDay weekDay = fromEnum weekDay
 

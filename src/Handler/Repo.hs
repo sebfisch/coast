@@ -17,7 +17,8 @@ import           Data.List           (sort)
 import           Data.Maybe          (isJust)
 import           System.Directory    (doesDirectoryExist, doesFileExist,
                                       getDirectoryContents)
-import           System.FilePath     (joinPath, takeExtension, (</>))
+import           System.FilePath     (addTrailingPathSeparator, joinPath,
+                                      takeExtension, (</>))
 
 import qualified Data.ByteString     as B
 import qualified Data.Text.IO        as T
@@ -73,7 +74,9 @@ annotate :: Repository -> [String] -> String -> IO DirEntry
 annotate repo path name = do
     let prefix = joinPath (repoDir repo:path)
     isFile <- liftIO $ doesFileExist $ prefix </> name
-    DirEntry isFile name <$> lastChangeInfo repo (joinPath $ path ++ [name])
+    let fullName = (if isFile then id else addTrailingPathSeparator) $
+                    joinPath $ path ++ [name]
+    DirEntry isFile name <$> lastChangeInfo repo fullName
 
 
 guessIfTextFile :: FilePath -> IO Bool
