@@ -91,8 +91,9 @@ timeDiffMsg now before
     hours   = tdHour
     minutes = tdMin
 
-    weeks   | fromWeekDay ctWDay <= days && days <= 7   = 1
-            | otherwise                                 = days `div` 7
+    weeks
+        | max 4 (fromWeekDay ctWDay) <= days && days <= 7   = 1
+        | otherwise                                         = days `div` 7
 
     approx :: Int -> Int -> Double -> Int -> Int
     approx current unit parts sub
