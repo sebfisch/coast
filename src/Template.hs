@@ -88,8 +88,8 @@ timeDiffMsg now before
     years   = approx ctYear                     tdYear  12  tdMonth
     months  = approx (succ $ fromEnum ctMonth)  tdMonth 30  tdDay
     days    = approx ctDay                      tdDay   24  tdHour
-    hours   = approx ctHour                     tdHour  60  tdMin
-    minutes = approx ctMin                      tdMin   60  tdSec
+    hours   = tdHour
+    minutes = tdMin
 
     weeks   | fromWeekDay ctWDay <= days && days <= 7   = 1
             | otherwise                                 = days `div` 7
