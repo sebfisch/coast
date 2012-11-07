@@ -1,7 +1,7 @@
 # Coast - Code Host
 
 Coast is a code hoast for the [Darcs] version control system. It is in a very
-early stage of development and not ready for use.
+early stage of development and not yet ready for use.
 
 If you want to try it anyway, you can get coast using darcs or git:
 
